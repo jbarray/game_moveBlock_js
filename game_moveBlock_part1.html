@@ -1,0 +1,305 @@
+<!--实现一个类似棋盘的格子空间，每个格子用两个数字可以定位，一个红正方形的DOM在这个空间内，正方形中的蓝色边表示这是他的正面，有一个input输入框-->
+<!--在输入框中允许输入如下指令，按下按钮后，使得正方形做相应动作-->
+<!--GO：向蓝色边所面向的方向前进一格（一格等同于正方形的边长）-->
+<!--TUN LEF：向左转（逆时针旋转90度）-->
+<!--TUN RIG：向右转（顺时针旋转90度）-->
+<!--TUN BAC：向右转（旋转180度）-->
+<!--移动不能超出格子空间-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>移动的小方块</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        body{
+            padding-left: 20px;
+        }
+        #topNumber{
+            display: inline-block;
+            padding-left: 40px;
+        }
+        #topNumber li{
+            list-style: none;
+            display: inline-block;
+            padding:0 16px;
+            margin-top:20px;
+        }
+        #under{
+            margin-top: 20px;
+        }
+        #underNumber{
+            display: inline-block;
+            vertical-align: top;
+        }
+        #underNumber li{
+             list-style: none;
+            padding-bottom: 12px;
+            padding-top: 13px;
+         }
+        table {
+            vertical-align: top;
+            display: inline-block;
+            border: 1px solid black;
+            border-collapse: collapse;
+            margin-left: 15px;
+        }
+        table td{
+            border: 1px solid gainsboro;
+            width: 45px;
+            height: 45px;
+        }
+        #operation,#hind{
+            margin-top: 20px;
+            margin-left: 38px;
+        }
+        #blockMap{
+            position: absolute;
+            float: left;
+            width: 461px;
+            height: 461px;
+            margin-top: -463px;
+            margin-left: 39px;
+        }
+    </style>
+</head>
+<body>
+    <ol id="topNumber">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+    </ol>
+<div id="under">
+    <div id="underNumber">
+        <ol id="underNumberOl">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>6</li>
+            <li>7</li>
+            <li>8</li>
+            <li>9</li>
+            <li>10</li>
+        </ol>
+    </div>
+    <div id="blockMap">
+        <div id="block" style="height: 46px;width: 46px;position: absolute; float: left;top:47px;left:1px;">
+            <div id="BlueBlock" style="height: 30%;width: 100%;background-color: darkblue;"></div>
+            <div id="RedBlock" style="height: 70%;width: 100%;background-color: red;"></div>
+        </div>
+    </div>
+    <table id="table">
+        <tr id="r1">
+            <td id="1 1"></td>
+            <td id="1 2"></td>
+            <td id="1 3"></td>
+            <td id="1 4"></td>
+            <td id="1 5"></td>
+            <td id="1 6"></td>
+            <td id="1 7"></td>
+            <td id="1 8"></td>
+            <td id="1 9"></td>
+            <td id="1 10"></td>
+        </tr>
+        <tr id="r2">
+            <td id="2 1"></td>
+            <td id="2 2"></td>
+            <td id="2 3"></td>
+            <td id="2 4"></td>
+            <td id="2 5"></td>
+            <td id="2 6"></td>
+            <td id="2 7"></td>
+            <td id="2 8"></td>
+            <td id="2 9"></td>
+            <td id="2 10"></td>
+        </tr>
+        <tr id="r3">
+            <td id="3 1"></td>
+            <td id="3 2"></td>
+            <td id="3 3"></td>
+            <td id="3 4"></td>
+            <td id="3 5"></td>
+            <td id="3 6"></td>
+            <td id="3 7"></td>
+            <td id="3 8"></td>
+            <td id="3 9"></td>
+            <td id="3 10"></td>
+        </tr>
+        <tr id="r4">
+            <td id="4 1"></td>
+            <td id="4 2"></td>
+            <td id="4 3"></td>
+            <td id="4 4"></td>
+            <td id="4 5"></td>
+            <td id="4 6"></td>
+            <td id="4 7"></td>
+            <td id="4 8"></td>
+            <td id="4 9"></td>
+            <td id="4 10"></td>
+        </tr>
+        <tr id="r5">
+            <td id="5 1"></td>
+            <td id="5 2"></td>
+            <td id="5 3"></td>
+            <td id="5 4"></td>
+            <td id="5 5"></td>
+            <td id="5 6"></td>
+            <td id="5 7"></td>
+            <td id="5 8"></td>
+            <td id="5 9"></td>
+            <td id="5 10"></td>
+        </tr>
+        <tr id="r6">
+            <td id="6 1"></td>
+            <td id="6 2"></td>
+            <td id="6 3"></td>
+            <td id="6 4"></td>
+            <td id="6 5"></td>
+            <td id="6 6"></td>
+            <td id="6 7"></td>
+            <td id="6 8"></td>
+            <td id="6 9"></td>
+            <td id="6 10"></td>
+        </tr>
+        <tr id="r7">
+            <td id="7 1"></td>
+            <td id="7 2"></td>
+            <td id="7 3"></td>
+            <td id="7 4"></td>
+            <td id="7 5"></td>
+            <td id="7 6"></td>
+            <td id="7 7"></td>
+            <td id="7 8"></td>
+            <td id="7 9"></td>
+            <td id="7 10"></td>
+        </tr>
+        <tr id="r8">
+            <td id="8 1"></td>
+            <td id="8 2"></td>
+            <td id="8 3"></td>
+            <td id="8 4"></td>
+            <td id="8 5"></td>
+            <td id="8 6"></td>
+            <td id="8 7"></td>
+            <td id="8 8"></td>
+            <td id="8 9"></td>
+            <td id="8 10"></td>
+        </tr>
+        <tr id="r9">
+            <td id="9 1"></td>
+            <td id="9 2"></td>
+            <td id="9 3"></td>
+            <td id="9 4"></td>
+            <td id="9 5"></td>
+            <td id="9 6"></td>
+            <td id="9 7"></td>
+            <td id="9 8"></td>
+            <td id="9 9"></td>
+            <td id="9 10"></td>
+        </tr>
+        <tr id="r10">
+            <td id="10 1"></td>
+            <td id="10 2"></td>
+            <td id="10 3"></td>
+            <td id="10 4"></td>
+            <td id="10 5"></td>
+            <td id="10 6"></td>
+            <td id="10 7"></td>
+            <td id="10 8"></td>
+            <td id="10 9"></td>
+            <td id="10 10"></td>
+        </tr>
+    </table>
+</div>
+<div id="operation">
+    <label>
+        <input id="input"/>
+    </label>
+    <button id="button">执行</button>
+</div>
+    <div id="hind">GO：向蓝色边所面向的方向前进一格<br/>TUN LEF：向左转（逆时针旋转90度）<br/>
+        TUN RIG：向右转（顺时针旋转90度）<br/>
+        TUN BAC：向右转（旋转180度）</div>
+<script>
+  //获得数据
+
+  var btn=document.getElementById('button');
+  var blockMap=document.getElementById('blockMap');
+  var block=document.getElementById('block');
+  var deg=0;
+  //input中输入内容,按钮委托
+  function data(){
+      var order=document.getElementById('input').value;
+ //     console.log(order);
+      if(order==="GO"){
+          GO();
+      }
+      else if(order==="TUN LEF"){
+          LEF();
+      }
+      else if(order==="TUN RIG"){
+          RIG();
+      }
+      else if(order==="TUN BAC"){
+          BAC();
+      }
+      else{
+          alert("输入有误,请重新输入!");
+      }
+  }
+  btn.addEventListener('click',function(){
+      data();
+  });
+  //go函数
+  function GO(){
+
+//      console.log(left);
+//      console.log(top);
+      var blockTop=block.offsetTop;
+      var blockLeft=block.offsetLeft;
+      if(deg<0){
+          deg=deg+360;
+      }
+           if(deg%360===0&&blockTop>0){
+               block.style.top=(blockTop-46)+"px";
+           }
+           else if(deg%360===180&&blockTop<400){
+              block.style.top=(blockTop+46)+"px";
+           }
+           else if(deg%360===90&&blockLeft<400){
+                block.style.left=(blockLeft+46)+"px";
+            }
+            else if(deg%360===270&&blockLeft>0){
+                block.style.left=(blockLeft-46)+"px";
+            }
+  }
+    //左旋90
+  function LEF() {
+      deg=(deg+270)%360;
+      block.style.transform='rotate('+deg+'deg)';
+  }
+    //右旋90
+  function RIG(){
+      deg=(deg+90)%360;
+      block.style.transform='rotate('+deg+'deg)';
+  }
+  //旋转180
+  function BAC(){
+      deg=(deg+180)%360;
+      block.style.transform='rotate('+deg+'deg)';
+  }
+</script>
+</body>
+</html>
